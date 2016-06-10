@@ -31,6 +31,11 @@ def longest(cursor):
 
 #def possible_attacks():
 
+"""
+if len(fighter_attacks > current_highest):
+	current_highest = fighters_attacks
+"""
+
 def main():
 	fighter_list = []
 	
