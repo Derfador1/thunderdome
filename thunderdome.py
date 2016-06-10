@@ -36,6 +36,21 @@ class Attack:
 		self.max_dmg = max_dmg
 		self.attack_speed = attack_speed
 
+#this code was acquired from
+#stackoverflow.com/question/4048651/python-function-to-convert-seconds-into-minutes-hours-and-days
+def ddhhmmss(seconds):
+	dhms = ''
+	for scale in 86400, 3600, 60:
+		result, seconds = divmod(seconds, scale)
+		if dhms != '' or result > 0:
+			dhms += '{0:02d}:'.format(result)
+	dhms += '{0:02d}'.format(seconds)
+	if len(dhms) < 3:
+		dhms = "00:00:" + dhms
+	elif len(dhms) <= 5:
+		dhms = "00:" + dhms
+	return dhms
+
 def create_combatants(cursor, fighter_list):
 	num_of_combatant = 0
 
@@ -127,6 +142,8 @@ def battle(fighter, defender):
 	
 def main():
 	random.seed(time)
+
+	count = 0
 	
 	rand_numb = 0
 
@@ -152,9 +169,25 @@ def main():
 	cursor = conn.cursor()
 
 	try:
+		cursor.execute('select * from fight')
+	except Exception as e:
+		print("Failed to access database, {0}".format(e))
+		exit(1)
+
+	rows = cursor.fetchall()
+
+	for row in rows:
+		count += 1
+
+	if count > 0:
+		print('Tournament has already taken place, please reset')
+		exit(1)
+
+	try:
 		cursor.execute('select * from species')
 	except Exception as e:
 		print("Failed to access database, {0}".format(e))
+		exit(1)
 
 	rows = cursor.fetchall()
 
@@ -167,6 +200,7 @@ def main():
 		cursor.execute('select * from attack')
 	except Exception as e:
 		print("Failed to access database, {0}".format(e))
+		exit(1)
 
 	rows = cursor.fetchall()
 
@@ -177,6 +211,7 @@ def main():
 		cursor.execute('select * from species_attack')
 	except Exception as e:
 		print("Failed to access database, {0}".format(e))
+		exit(1)
 
 	rows = cursor.fetchall()
 
@@ -187,19 +222,34 @@ def main():
 
 	conn.commit()
 
+
+	prev_time = 0
 	pairs = itertools.combinations(fighter_list, 2)
 	for sset in pairs:
 		final = battle(sset[0], sset[1])
 	
+		final_time = 0
+
+		start_str = '2016-06-10 ' + ddhhmmss(final_time) #always starts from 00:00:00
+
+		final_time += final[1]
+
+		fin_str = '2016-06-10 ' + ddhhmmss(final_time)
+
 		if final[0] == 0:
-			print('draw')
+			#print('draw')
+			cursor.execute("insert into fight (combatant_one, combatant_two, winner, start, finish) values (%s, %s, 'Tie', TIMESTAMP \
+			%s, TIMESTAMP %s)", (sset[0].c_id, sset[1].c_id, start_str, fin_str))
 		elif final[0] == 1:
-			print('loss')
+			#print('loss')
+			cursor.execute("insert into fight (combatant_one, combatant_two, winner, start, finish) values (%s, %s, 'Two', TIMESTAMP \
+			%s, TIMESTAMP %s)", (sset[0].c_id, sset[1].c_id, start_str, fin_str))
 		else:
-			print('victory')
+			#print('victory')
+			cursor.execute("insert into fight (combatant_one, combatant_two, winner, start, finish) values (%s, %s, 'One', TIMESTAMP \
+			%s, TIMESTAMP %s)", (sset[0].c_id, sset[1].c_id, start_str, fin_str))
 
 	conn.commit()
-
 	conn.close()
 
 if __name__ == "__main__":
