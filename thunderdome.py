@@ -102,8 +102,8 @@ def battle(fighter, defender):
 	defender_time = 0
 	total_time = 0
 
-	print(fighter.char_name, "has", fighter.base_hp, "hp")
-	print(defender.char_name, "has", defender.base_hp, "hp")
+	#print(fighter.char_name, "has", fighter.base_hp, "hp")
+	#print(defender.char_name, "has", defender.base_hp, "hp")
 
 	while(atk_hp >= 0 and def_hp >= 0):
 		if fighter_time == 0:
@@ -113,7 +113,7 @@ def battle(fighter, defender):
 			fighter_time -= 1
 			if fighter_time == 0:
 				damage = dmg(fighter, defender, fighter_attack)
-				print(fighter.char_name, "hit", defender.char_name, "with", fighter_attack.name, "for", damage)
+				#print(fighter.char_name, "hit", defender.char_name, "with", fighter_attack.name, "for", damage)
 				def_hp -= damage
 
 		if defender_time == 0:
@@ -123,19 +123,19 @@ def battle(fighter, defender):
 			defender_time -= 1
 			if defender_time == 0:
 				damage = dmg(defender, fighter, defender_attack)
-				print(defender.char_name, "hits", fighter.char_name, "with", defender_attack.name, "for", damage)
+				#print(defender.char_name, "hits", fighter.char_name, "with", defender_attack.name, "for", damage)
 				atk_hp -= damage
 			
 		total_time+= 1
 
 	if atk_hp >= 0 and def_hp < 0:
-		print("victory in", total_time, "seconds")
+		#print("victory in", total_time, "seconds")
 		return 2, total_time
 	elif atk_hp < 0 and def_hp >= 0:
-		print("defeat in", total_time, "seconds")
+		#print("defeat in", total_time, "seconds")
 		return 1, total_time
 	else:
-		print("draw in", total_time, "seconds")
+		#print("draw in", total_time, "seconds")
 		return 0, total_time
 
 			
@@ -235,15 +235,12 @@ def main():
 		fin_str = '2016-06-10 ' + ddhhmmss(final_time)
 
 		if final[0] == 0:
-			#print('draw')
 			cursor.execute("insert into fight (combatant_one, combatant_two, winner, start, finish) values (%s, %s, 'Tie', TIMESTAMP \
 			%s, TIMESTAMP %s)", (sset[0].c_id, sset[1].c_id, start_str, fin_str))
 		elif final[0] == 1:
-			#print('loss')
 			cursor.execute("insert into fight (combatant_one, combatant_two, winner, start, finish) values (%s, %s, 'Two', TIMESTAMP \
 			%s, TIMESTAMP %s)", (sset[0].c_id, sset[1].c_id, start_str, fin_str))
 		else:
-			#print('victory')
 			cursor.execute("insert into fight (combatant_one, combatant_two, winner, start, finish) values (%s, %s, 'One', TIMESTAMP \
 			%s, TIMESTAMP %s)", (sset[0].c_id, sset[1].c_id, start_str, fin_str))
 
