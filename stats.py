@@ -31,7 +31,6 @@ def longest(cursor):
 
 #def possible_attacks():
 
-
 def main():
 	fighter_list = []
 	
@@ -40,16 +39,6 @@ def main():
 	conn = psycopg2.connect(database=arg1)
 	
 	cursor = conn.cursor()
-	
-	#cursor.execute('select name from species')
-	
-	#rows = cursor.fetchall()
-
-	#for row in rows:
-	#	fighter_list.append(row)
-
-	#for name in fighter_list:
-	#	print(name)
 
 	print_menu()
 
