@@ -31,7 +31,8 @@ def main():
 	for row in rows:
 		print(row)
 	
-	print_menu()
+	#print_menu()
+	#trying to do stuff!!!!!
 	
 	conn.close()
 
