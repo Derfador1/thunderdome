@@ -222,8 +222,6 @@ def main():
 
 	conn.commit()
 
-
-	prev_time = 0
 	pairs = itertools.combinations(fighter_list, 2)
 	for sset in pairs:
 		final = battle(sset[0], sset[1])
