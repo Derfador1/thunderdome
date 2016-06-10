@@ -17,23 +17,55 @@ def print_menu():
 		
 		#clear results all need to do is delete from table_name
 
+def shortest(cursor):
+	cursor.execute("select name from fight order by finish - start desc")
+	return(rows[0][0])
+
+def longest(cursor):
+	cursor.execute("select name from fight order by finish - start")
+	return(rows[0][0])
+
+#def most_fights():
+
+#def least_fights():
+
+#def possible_attacks():
+
+
 def main():
-	list1 = []
+	fighter_list = []
 	
-	conn = psycopg2.connect("dbname='sparadis'")
+	arg1 = sys.argv[1]
+
+	conn = psycopg2.connect(database=arg1)
 	
 	cursor = conn.cursor()
 	
-	cursor.execute('select * from combatant')
+	#cursor.execute('select name from species')
 	
-	rows = cursor.fetchall()
+	#rows = cursor.fetchall()
 
-	for row in rows:
-		print(row)
-	
-	#print_menu()
-	#trying to do stuff!!!!!
-	
+	#for row in rows:
+	#	fighter_list.append(row)
+
+	#for name in fighter_list:
+	#	print(name)
+
+	print_menu()
+
+	while(1):
+		user_input = input('Choice: ')
+
+		if(user_input == '1'):
+			print("here")
+			longest_fight = longest(cursor)
+			print(longest_fight)
+		elif(user_input == '2'):
+			shrotest_fight = shortest(cursor)
+			print(shortest_fight)
+		else:
+			break
+
 	conn.close()
 
 if __name__ == "__main__":
