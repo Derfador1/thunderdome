@@ -18,6 +18,7 @@ def main():
 		exit(1)
 		
 	cursor = conn.cursor()
+	#resetting the fight table
 	try:
 		cursor.execute('delete from fight *')
 	except Exception as e:
