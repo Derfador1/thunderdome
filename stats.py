@@ -14,22 +14,6 @@ def print_menu():
 
 	for item in menu:
 		print(item)	
-		
-		#clear results all need to do is delete from table_name
-"""
-def shortest(cursor):
-	cursor.execute("select * from fight order by finish - start desc")
-	things = cursor.fetchall()
-	return(things[0][0])
-
-def longest(cursor):
-	cursor.execute("select * from fight order by finish - start")
-	things = cursor.fetchall()
-	return(things[0][0])
-	
-if len(fighter_attacks > current_highest):
-	current_highest = fighters_attacks
-"""
 
 def main():
 	fighter_list = []
@@ -51,10 +35,20 @@ def main():
 		
 		choice = input("Choice:")
 
-		cur.execute("select * from fight")
+		try:
+			cur.execute("select * from fight")
+		except Exception as e:
+			print("Failed to access database, {0}".format(e))
+			exit(1)
+			
 		fightfacts = cur.fetchall()
 
-		cur.execute("select * from combatant")
+		try:
+			cur.execute("select * from combatant")
+		except Exception as e:
+			print("Failed to access database, {0}".format(e))
+			exit(1)	
+					
 		combatantinfo = cur.fetchall()
 
 
@@ -66,25 +60,19 @@ def main():
 		#https://github.com/pauliracane/thunderdome/blob/master/stats
 		listTimeIn = [5]
 		if ( choice < '3' ):
-			for x in range(0, num):
-				timeIn = 0
-				for each in fightfacts:
-					if (each[0] == x + 1) or (each[1] == x + 1):
-						timeIn += (int(each[4].minute)*60+int(each[4].second)
-						- int(each[3].minute)*60+int(each[3].second))
-				listTimeIn.append(timeIn)
+			#this query and setup style was found through the help of
+			#https://github.com/JMcLaurin/thunderdome/blob/master/stats.py
+			sql_query = "SELECT id, name, SUM(finish-start)"
+			sql_query += "FROM combatant JOIN fight ON id=combatant_one OR"
+			sql_query += " id=combatant_two GROUP BY id ORDER BY sum DESC;"
+
+			cur.execute(sql_query) 
+			time = cur.fetchall()			
 
 			if choice == '1':
-				LongestFighter = max(listTimeIn)
-				x = [i for i, j in enumerate(listTimeIn) if j == LongestFighter]
-
-				for each in combatantinfo:
-					if (each[0] == x[0]):
-						print(each[1], "fought for",LongestFighter,"seconds!")
-
+				print(time[0][1], "fought for", time[0][2])
 			elif choice == '2':
-				print('not working')
-				#need to fix this one
+				print(time[-1][1], "fought for", time[-1][2])
 		elif ( choice == '3' ):
 			highestnumskills = [0, 0]
 			for each in combatantinfo:
@@ -110,7 +98,7 @@ def main():
 						if ((int(thing[0]) == x) and (thing[2] == "One") or
 						(int(thing[1]) == x) and (thing[2] == "Two")):
 							ListOfThings[x]+=1
-				print("The Most wins was: ",max(ListOfThings))
+				print("The most wins was: ",max(ListOfThings))
 			elif (choice == '5'):
 				for x in range(1, len(combatantinfo)):
 					for thing in fightfacts:
