@@ -25,7 +25,11 @@ def main():
 	
 	arg1 = sys.argv[1]
 
-	conn = psycopg2.connect(database=arg1)
+	try:
+		conn = psycopg2.connect(database=arg1)
+	except Exception as e:
+		print("Failure to connect to database")
+		exit(1)
 	
 	cur = conn.cursor()
 
