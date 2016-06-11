@@ -9,6 +9,7 @@ def main():
 	conn = psycopg2.connect(database=arg1)
 	cursor = conn.cursor()
 	cursor.execute('delete from fight *')
+	
 	"""
 	cursor.execute("drop table attack cascade;")
 	cursor.execute("drop table combatant cascade;")
