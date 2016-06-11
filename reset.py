@@ -4,11 +4,20 @@ import psycopg2
 import sys
 
 def main():
+	if(len(sys.argv) != 2):
+		print("Invalid Syntax")
+		print("Usage: ./reset.py <db-name>")
+		sys.exit()
+	
 	arg1 = sys.argv[1]
 		
 	conn = psycopg2.connect(database=arg1)
 	cursor = conn.cursor()
-	cursor.execute('delete from fight *')
+	try:
+		cursor.execute('delete from fight *')
+	except Exception as e:
+		print("Failed to access database, {0}".format(e))
+		exit(1)
 	
 	"""
 	cursor.execute("drop table attack cascade;")
